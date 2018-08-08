@@ -29,13 +29,12 @@ class SmsApi
      */
     protected function createClient() {
         if (!self::$client) {
-            // $this->loadCredentialsFromConfig();
-            $headers = isset($this->config['headers']) ? $this->config['headers'] : null;
-            if ($headers) {
-                self::$client = new Client(['headers' => $headers]);
-            } else {
+            // $headers = isset($this->config['headers']) ? $this->config['headers'] : null;
+            // if ($headers) {
+                // self::$client = new Client(['headers' => $headers]);
+            // } else {
                 self::$client = new Client;
-            }
+            // }
         }
         return $this;
     }
@@ -168,18 +167,25 @@ class SmsApi
         }
         try {
             // $this->response = $this->getClient()->get($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
+            $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
 
             // Create promise
-            $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params));
+            if ($token) {
+                $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params))->withHeader('Authorization', 'Bearer ' . $token);
+            } else {
+                $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params));
+            }
 
-            // Read response
+            // Read response from promise
             $this->response = $promise->wait()->getBody()->getContents();
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $this->response = $e->getResponseBodySummary($e->getResponse());
             }
         }
+
         Log::info('SMS Gateway Response: '.$this->response);
+
         return $this;
     }
 
