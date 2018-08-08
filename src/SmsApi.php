@@ -28,8 +28,13 @@ class SmsApi
      * @return $this
      */
     protected function createClient() {
-        if(!self::$client){
-            self::$client = new Client;
+        if (!self::$client) {
+            $headers = $this->config('headers', null);
+            if ($headers) {
+                self::$client = new Client(['headers'] => $headers);
+            } else {
+                self::$client = new Client;
+            }
         }
         return $this;
     }
@@ -74,7 +79,7 @@ class SmsApi
      * @param string $gateway
      * @return $this
      */
-    public function gateway($gateway=''){
+    public function gateway($gateway='') {
         $this->gateway = $gateway;
         return $this;
     }
@@ -161,7 +166,7 @@ class SmsApi
             $mobile = $this->composeBulkMobile($mobile);
         }
         try {
-            $this->response = $this->getClient()->get($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
+            $this->response = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $this->response = $e->getResponseBodySummary($e->getResponse());
