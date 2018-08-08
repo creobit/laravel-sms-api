@@ -29,19 +29,7 @@ class SmsApi
      */
     protected function createClient() {
         if (!self::$client) {
-            $this->loadCredentialsFromConfig();
-            $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
-            Log::info('SMSAPI Token: ' . $token . $this->config);
-            if ($token) {
-                $headers = [
-                    'Authorization' => 'Bearer ' . $token,
-                    'debug' => true
-                ];
-
-                self::$client = new Client(['headers' => $headers]);
-            } else {
-                self::$client = new Client;
-            }
+            self::$client = new Client;
         }
         return $this;
     }
@@ -174,10 +162,20 @@ class SmsApi
         }
         try {
             // $this->response = $this->getClient()->get($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
-            // $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
+            $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
 
             // Create promise
-            $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params));
+            if($token) {
+                $headers = [
+                    'Authorization' => 'Bearer ' . $token
+                ];
+                $promise = $this->getClient()->requestAsync('GET',
+                    $this->getUrl($mobile,$message,$extra_params),
+                    ['headers' => $headers]
+                );
+            } else {
+                $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params));
+            }
 
             // Read response from promise
             $this->response = $promise->wait()->getBody()->getContents();
