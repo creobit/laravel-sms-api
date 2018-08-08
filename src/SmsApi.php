@@ -31,6 +31,7 @@ class SmsApi
         if (!self::$client) {
             $this->loadCredentialsFromConfig();
             $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
+            Log::info('SMSAPI Token: ' . $token);
             if ($token) {
                 $headers = [
                     'Authorization' => 'Bearer ' . $token,
