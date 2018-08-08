@@ -31,7 +31,10 @@ class SmsApi
         if (!self::$client) {
             $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
             if ($token) {
-                $headers = ['Authorization' => 'Bearer ' . $token];
+                $headers = [
+                    'Authorization' => 'Bearer ' . $token,
+                    'debug' => true
+                ];
 
                 self::$client = new Client(['headers' => $headers]);
             } else {
