@@ -167,7 +167,13 @@ class SmsApi
             $mobile = $this->composeBulkMobile($mobile);
         }
         try {
-            $this->response = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
+            // $this->response = $this->getClient()->get($this->getUrl($mobile,$message,$extra_params))->getBody()->getContents();
+
+            // Create promise
+            $promise = $this->getClient()->getAsync($this->getUrl($mobile,$message,$extra_params));
+
+            // Read response
+            $this->response = $promise->wait()->getBody()->getContents();
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $this->response = $e->getResponseBodySummary($e->getResponse());
