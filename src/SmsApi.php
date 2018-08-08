@@ -29,6 +29,7 @@ class SmsApi
      */
     protected function createClient() {
         if (!self::$client) {
+            $this->loadCredentialsFromConfig();
             $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
             if ($token) {
                 $headers = [
