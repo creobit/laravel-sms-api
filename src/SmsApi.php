@@ -31,7 +31,7 @@ class SmsApi
         if (!self::$client) {
             $headers = $this->config('headers', null);
             if ($headers) {
-                self::$client = new Client(['headers'] => $headers);
+                self::$client = new Client(['headers'] => [$headers]);
             } else {
                 self::$client = new Client;
             }
