@@ -31,14 +31,12 @@ class SmsApi
         if (!self::$client) {
             $this->loadCredentialsFromConfig();
             $token = isset($this->config['headers']['token']) ? $this->config['headers']['token'] : null;
-            Log::info('SMSAPI Token: ' . $token);
+            Log::info('SMSAPI Token: ' . $token . $this->config);
             if ($token) {
                 $headers = [
                     'Authorization' => 'Bearer ' . $token,
                     'debug' => true
                 ];
-
-                Log::info('SMSAPI: ' . $headers);
 
                 self::$client = new Client(['headers' => $headers]);
             } else {
