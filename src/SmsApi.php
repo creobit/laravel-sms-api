@@ -37,6 +37,8 @@ class SmsApi
                     'debug' => true
                 ];
 
+                Log::info('SMSAPI: ' . $headers);
+
                 self::$client = new Client(['headers' => $headers]);
             } else {
                 self::$client = new Client;
